@@ -1,19 +1,19 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useGLTF } from '@react-three/drei';
-import * as THREE from 'three';
-import { useFlavorStore } from '../../../hooks/useFlavorStore';
+import { useEffect, useMemo, useState } from "react";
+import { useGLTF } from "@react-three/drei";
+import * as THREE from "three";
+import { useFlavorStore } from "../../../hooks/useFlavorStore";
 
 // Actual detected model path (adjusted after directory inspection)
 // If you rename the file, update here or extract to configuration.
-const MODEL_PATH = '/models/fresas-con-crema.glb';
+const MODEL_PATH = "/models/fresas-con-crema.glb";
 
 // Basic flavor color mapping (can refine to full PBR later)
 const FLAVOR_COLORS: Record<string, string> = {
-  vainilla: '#F5E6C8',
-  fresa: '#FAD1D8',
-  pistacho: '#CDE3C1',
-  chocolate: '#5A3E36',
-  matcha: '#A3C686'
+  vainilla: "#F5E6C8",
+  fresa: "#FAD1D8",
+  pistacho: "#CDE3C1",
+  chocolate: "#5A3E36",
+  matcha: "#A3C686",
 };
 
 // We will preload dynamically only after confirming the asset exists to avoid noisy errors.
@@ -25,14 +25,24 @@ interface ConeScoopModelProps {
 }
 
 // Internal component that actually loads & renders the GLTF once availability confirmed
-function LoadedModel({ activeFlavor, progress, showExploded }: { activeFlavor: string; progress: number; showExploded?: boolean }) {
+function LoadedModel({
+  activeFlavor,
+  progress,
+  showExploded,
+}: {
+  activeFlavor: string;
+  progress: number;
+  showExploded?: boolean;
+}) {
   const { scene } = useGLTF(MODEL_PATH) as any;
 
   // Clone once to avoid mutating original gltf scene on re-renders
   const cloned = useMemo(() => scene.clone(true), [scene]);
 
   useMemo(() => {
-    const color = new THREE.Color(FLAVOR_COLORS[activeFlavor] || FLAVOR_COLORS.vainilla);
+    const color = new THREE.Color(
+      FLAVOR_COLORS[activeFlavor] || FLAVOR_COLORS.vainilla
+    );
     cloned.traverse((obj: any) => {
       if (obj.isMesh) {
         if (/scoop/i.test(obj.name)) {
@@ -59,19 +69,26 @@ function LoadedModel({ activeFlavor, progress, showExploded }: { activeFlavor: s
   );
 }
 
-export function ConeScoopModel({ progress, showExploded }: ConeScoopModelProps) {
-  const activeFlavor = useFlavorStore(s => s.activeFlavor) || 'vainilla';
+export function ConeScoopModel({
+  progress,
+  showExploded,
+}: ConeScoopModelProps) {
+  const activeFlavor = useFlavorStore((s) => s.activeFlavor) || "vainilla";
   const [available, setAvailable] = useState<boolean | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(MODEL_PATH, { method: 'HEAD' });
+        const res = await fetch(MODEL_PATH, { method: "HEAD" });
         if (!cancelled) {
           if (res.ok) {
             // Only preload when we know it's there
-            try { useGLTF.preload(MODEL_PATH); } catch {/* ignore */}
+            try {
+              useGLTF.preload(MODEL_PATH);
+            } catch {
+              /* ignore */
+            }
             setAvailable(true);
           } else {
             setAvailable(false);
@@ -81,7 +98,9 @@ export function ConeScoopModel({ progress, showExploded }: ConeScoopModelProps) 
         if (!cancelled) setAvailable(false);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // While checking availability, render nothing to avoid layout shift inside Canvas
@@ -101,7 +120,13 @@ export function ConeScoopModel({ progress, showExploded }: ConeScoopModelProps) 
     );
   }
 
-  return <LoadedModel activeFlavor={activeFlavor} progress={progress} showExploded={showExploded} />;
+  return (
+    <LoadedModel
+      activeFlavor={activeFlavor}
+      progress={progress}
+      showExploded={showExploded}
+    />
+  );
 }
 
 export default ConeScoopModel;

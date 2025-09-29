@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface FlavorState {
   activeFlavor: string | null;
@@ -7,5 +7,5 @@ interface FlavorState {
 
 export const useFlavorStore = create<FlavorState>((set) => ({
   activeFlavor: null,
-  setActiveFlavor: (id) => set({ activeFlavor: id })
+  setActiveFlavor: (id) => set({ activeFlavor: id }),
 }));
