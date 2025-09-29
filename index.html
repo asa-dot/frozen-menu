@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/public/images/logo-helados.png"
+    />
+    <!-- Nota: Deshabilitar zoom puede afectar accesibilidad (usuarios con baja visión). -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <meta
+      name="description"
+      content="Helados gourmet, sin prisas, con alma. Sabores artesanales y experiencia sensorial en 3D."
+    />
+    <meta property="og:title" content="Helados Gourmet" />
+    <meta
+      property="og:description"
+      content="Helados gourmet, sin prisas, con alma."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/og-cover.jpg" />
+    <title>Helados Gourmet</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body
+    class="font-sans bg-vanilla text-neutral-800 dark:bg-neutral-900 dark:text-neutral-100"
+  >
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-white text-black px-3 py-1 rounded"
+      >Saltar al contenido</a
+    >
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Prevención de doble tap zoom en iOS / móviles
+      let lastTouchEnd = 0;
+      document.addEventListener(
+        "touchend",
+        function (event) {
+          const now = Date.now();
+          // Si dos touchend muy seguidos, prevenir el zoom
+          if (now - lastTouchEnd <= 320) {
+            event.preventDefault();
+          }
+          lastTouchEnd = now;
+        },
+        { passive: false }
+      );
+
+      // Prevenir pinch zoom (gestos) en navegadores WebKit
+      document.addEventListener(
+        "gesturestart",
+        function (e) {
+          e.preventDefault();
+        },
+        { passive: false }
+      );
+
+      // Prevenir zoom con Ctrl + wheel (desktop / algunos móviles con trackpad)
+      document.addEventListener(
+        "wheel",
+        function (e) {
+          if (e.ctrlKey) {
+            e.preventDefault();
+          }
+        },
+        { passive: false }
+      );
+    </script>
+  </body>
+</html>
