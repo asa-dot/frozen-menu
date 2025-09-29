@@ -13,7 +13,7 @@ const baseMaterials = [
 // Simple instanced toppings (sprinkles) placeholder
 function Toppings({ progress }: { progress: number }) {
   const instRef = useRef<THREE.InstancedMesh>(null!);
-  const count = 60;
+  const count = 38; // reduced for performance
   const r = 1.4;
   const up = THREE.MathUtils.clamp((progress - 0.33) / 0.2, 0, 1); // appear after first third
   const tmp = new THREE.Object3D();

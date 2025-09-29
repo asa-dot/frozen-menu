@@ -10,6 +10,10 @@ html,
 body,
 #root {
   height: 100%;
+  background: theme("colors.vanilla"); /* fondo vainilla uniforme */
+  /* Fallback por si el token no se resuelve (muy raro en build): */
+  background-color: #f5e6c8;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Preferencias de reducción de movimiento */
