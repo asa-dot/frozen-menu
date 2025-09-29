@@ -49,10 +49,10 @@ const flavorItems: FlavorItem[] = FLAVORS.map((label) => ({
 const AGUA = new Set<string>(["chamoy", "pica-fresa", "pulparindo"]);
 const PREMIUM = new Set<string>(["ferrero-rocher", "magnum"]);
 
-function getCategory(slug: string): 'leche' | 'agua' | 'premium' {
-  if (AGUA.has(slug)) return 'agua';
-  if (PREMIUM.has(slug)) return 'premium';
-  return 'leche';
+function getCategory(slug: string): "leche" | "agua" | "premium" {
+  if (AGUA.has(slug)) return "agua";
+  if (PREMIUM.has(slug)) return "premium";
+  return "leche";
 }
 
 function buildImagePath(slug: string) {
@@ -64,10 +64,19 @@ export function FlavorList() {
   const active = useFlavorStore((s) => s.activeFlavor);
   const setActive = useFlavorStore((s) => s.setActiveFlavor);
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
-  const [orientation, setOrientation] = useState<Record<string, 'portrait' | 'landscape' | 'square'>>({});
-  const [dims, setDims] = useState<Record<string, { w: number; h: number }>>({});
+  const [orientation, setOrientation] = useState<
+    Record<string, "portrait" | "landscape" | "square">
+  >({});
+  const [dims, setDims] = useState<Record<string, { w: number; h: number }>>(
+    {}
+  );
   // Control de gesto para evitar selección accidental al hacer scroll
-  const pointerData = useRef<{ id: string; x: number; y: number; moved: boolean } | null>(null);
+  const pointerData = useRef<{
+    id: string;
+    x: number;
+    y: number;
+    moved: boolean;
+  } | null>(null);
   const MOVE_THRESHOLD = 10; // px
 
   return (
@@ -87,10 +96,19 @@ export function FlavorList() {
                   key={item.id}
                   // Manejo personalizado de tap para no cambiar mientras se desplaza
                   onPointerDown={(e) => {
-                    pointerData.current = { id: item.id, x: e.clientX, y: e.clientY, moved: false };
+                    pointerData.current = {
+                      id: item.id,
+                      x: e.clientX,
+                      y: e.clientY,
+                      moved: false,
+                    };
                   }}
                   onPointerMove={(e) => {
-                    if (!pointerData.current || pointerData.current.id !== item.id) return;
+                    if (
+                      !pointerData.current ||
+                      pointerData.current.id !== item.id
+                    )
+                      return;
                     if (pointerData.current.moved) return;
                     const dx = Math.abs(e.clientX - pointerData.current.x);
                     const dy = Math.abs(e.clientY - pointerData.current.y);
@@ -99,16 +117,24 @@ export function FlavorList() {
                     }
                   }}
                   onPointerUp={(e) => {
-                    if (!pointerData.current || pointerData.current.id !== item.id) return;
+                    if (
+                      !pointerData.current ||
+                      pointerData.current.id !== item.id
+                    )
+                      return;
                     if (!pointerData.current.moved) {
                       setActive(item.id);
                     }
                     pointerData.current = null;
                   }}
-                  onPointerCancel={() => { pointerData.current = null; }}
-                  onPointerLeave={() => { /* No limpiar para permitir up fuera si se arrastra levemente */ }}
+                  onPointerCancel={() => {
+                    pointerData.current = null;
+                  }}
+                  onPointerLeave={() => {
+                    /* No limpiar para permitir up fuera si se arrastra levemente */
+                  }}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
+                    if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault();
                       setActive(item.id);
                     }
@@ -119,7 +145,7 @@ export function FlavorList() {
                       : "border-neutral-200 dark:border-neutral-700 hover:border-accent/60 bg-white/60 dark:bg-neutral-800/40"
                   }`}
                   aria-pressed={isActive}
-                  aria-current={isActive ? 'true' : undefined}
+                  aria-current={isActive ? "true" : undefined}
                   role="listitem"
                 >
                   <span className="capitalize block truncate">
@@ -139,39 +165,72 @@ export function FlavorList() {
                 {(() => {
                   const MAX = 320; // límite visual
                   const data = dims[active];
-                  let style: React.CSSProperties = { maxWidth: MAX, maxHeight: MAX };
+                  let style: React.CSSProperties = {
+                    maxWidth: MAX,
+                    maxHeight: MAX,
+                  };
                   if (data) {
                     const { w, h } = data;
                     const ratio = w / h;
                     if (ratio >= 1) {
                       // landscape o cuadrada
                       style.width = Math.min(w, MAX);
-                      style.height = Math.min(style.width as number / ratio, MAX);
+                      style.height = Math.min(
+                        (style.width as number) / ratio,
+                        MAX
+                      );
                     } else {
                       // portrait
                       style.height = Math.min(h, MAX);
-                      style.width = Math.min((style.height as number) * ratio, MAX);
+                      style.width = Math.min(
+                        (style.height as number) * ratio,
+                        MAX
+                      );
                     }
                   }
                   return (
-                    <div className="relative flex items-center justify-center" style={{ minHeight: 180 }}>
+                    <div
+                      className="relative flex items-center justify-center"
+                      style={{ minHeight: 180 }}
+                    >
                       <div className="relative" style={style}>
                         <img
                           src={buildImagePath(active)}
-                          alt={`Imagen de ${flavorItems.find((f) => f.id === active)?.label}`}
-                          className={`block w-full h-full object-contain rounded-xl shadow-sm ring-1 ring-neutral-200/70 dark:ring-neutral-700/60 bg-white/70 dark:bg-neutral-900/40 ${loadedImages[active] ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+                          alt={`Imagen de ${
+                            flavorItems.find((f) => f.id === active)?.label
+                          }`}
+                          className={`block w-full h-full object-contain rounded-xl shadow-sm ring-1 ring-neutral-200/70 dark:ring-neutral-700/60 bg-white/70 dark:bg-neutral-900/40 ${
+                            loadedImages[active] ? "opacity-100" : "opacity-0"
+                          } transition-opacity duration-300`}
                           onLoad={(e) => {
                             const img = e.currentTarget;
-                            const o = img.naturalWidth === img.naturalHeight
-                              ? 'square'
-                              : img.naturalWidth > img.naturalHeight
-                                ? 'landscape'
-                                : 'portrait';
-                            setOrientation(prev => ({ ...prev, [active]: o }));
-                            setDims(prev => ({ ...prev, [active]: { w: img.naturalWidth, h: img.naturalHeight } }));
-                            setLoadedImages(prev => ({ ...prev, [active]: true }));
+                            const o =
+                              img.naturalWidth === img.naturalHeight
+                                ? "square"
+                                : img.naturalWidth > img.naturalHeight
+                                ? "landscape"
+                                : "portrait";
+                            setOrientation((prev) => ({
+                              ...prev,
+                              [active]: o,
+                            }));
+                            setDims((prev) => ({
+                              ...prev,
+                              [active]: {
+                                w: img.naturalWidth,
+                                h: img.naturalHeight,
+                              },
+                            }));
+                            setLoadedImages((prev) => ({
+                              ...prev,
+                              [active]: true,
+                            }));
                           }}
-                          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                          onError={(e) => {
+                            (
+                              e.currentTarget as HTMLImageElement
+                            ).style.display = "none";
+                          }}
                           loading="lazy"
                         />
                         {!loadedImages[active] && (
